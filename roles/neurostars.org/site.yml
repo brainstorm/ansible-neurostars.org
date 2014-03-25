@@ -36,10 +36,10 @@
           - virtualenv
 
     - name: "Install site dependencies on the virtualenv"
-      pip: requirements={{ site_prefix }}/{{ hostname }}/requirements.txt virtualenv={{ site_prefix }}/{{ hostname }}
+      pip: requirements={{ site_prefix }}/{{ hostname }}/requirements.txt virtualenv={{ site_prefix }}/{{ hostname }}/.venv
     
     - name: "Install postgresql support for python"
-      pip: name=psycopg2 virtualenv={{ site_prefix }}/{{ hostname }}
+      pip: name=psycopg2 virtualenv={{ site_prefix }}/{{ hostname }}/.venv
 
     - name: "Copy Nginx neurostars.org template"
       template: src=templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf
@@ -55,6 +55,6 @@
           command=collectstatic
           app_path={{ site_prefix }}/{{ hostname }}
           settings={{ site_prefix }}/{{ hostname }}
-          virtualenv={{ site_prefix }}/{{ hostname }}
+          virtualenv={{ site_prefix }}/{{ hostname }}/.venv
           settings=main.settings
           link=true
