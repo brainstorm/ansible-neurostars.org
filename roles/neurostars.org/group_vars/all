@@ -5,11 +5,6 @@ workers: 8
 admin_name: Roman Valls Guimera
 admin_email: roman@incf.org
 
-# OS
-# python -c 'import crypt; print crypt.crypt("This is my Password", "$1$Fe7eRoo0$")'
-osuser: neurostar
-ospassword: $1$FOOOHASSHHH
-
 # Database
 dbname: neurostars
 dbuser: neurostar

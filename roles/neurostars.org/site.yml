@@ -14,10 +14,6 @@
     - name: "Set the hostname"
       shell: hostname {{ hostname }}
 
-    #- name: "Create a user for this Django webapp"
-    #  user: name={{ osuser }} password={{ ospassword }} groups=www-data
-    #  No need, it runs under www-data
-
     - name: "Configure postgresql"
       sudo: yes
       sudo_user: postgres
@@ -38,7 +34,6 @@
       action: pip name={{ item }} state=present
       with_items:
           - virtualenv
-            #      - uwsgi # superseeded by ansible-galaxy role
 
     - name: "Install site dependencies on the virtualenv"
       pip: requirements={{ site_prefix }}/{{ hostname }}/requirements.txt virtualenv={{ site_prefix }}/{{ hostname }}
@@ -49,17 +44,8 @@
     - name: "Copy Nginx neurostars.org template"
       template: src=templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf
 
-    - name: "Create app directories for uWSGI"
-      action: files path={{ item }} state=directory
-      with_items: 
-          - /etc/uwsgi/apps-enabled
-          - /etc/uwsgi/apps-available
-
     - name: "Copy uWSGI template"
-      template: src=templates/uwsgi.ini.j2 dest=/etc/uwsgi/apps-available/neurostars.org.ini
-
-    - name: "Activate uWSGI app by symlinking"
-      file: src=/etc/uwsgi/apps-available/uwsgi.ini.j2 dest=/etc/uwsgi/apps-enabled/neurostars.ini state=link
+      template: src=templates/uwsgi.ini.j2 dest=/etc/uwsgi/neurostars.org.ini
 
     - name: "External mountpoint for static files, ensure it is created and present"
       file: path=/mnt/static owner=www-data group=www-data state=directory
