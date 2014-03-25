@@ -1,6 +1,8 @@
 # Site configuration 
 site_prefix: /var/www
 hostname: neurostars.org
+www_neuro: "{{ site_prefix }}/{{ hostname }}"
+
 workers: 8
 admin_name: Roman Valls Guimera
 admin_email: roman@incf.org
