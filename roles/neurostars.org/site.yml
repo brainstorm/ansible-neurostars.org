@@ -21,14 +21,14 @@
 
     - name: "Clone the website from GitHub"
       git: repo=https://github.com/brainstorm/biostar-central 
-            dest={{ site_prefix }}/{{ hostname }}
+            dest={{ www_neuro }}
             version={{ hostname }}
 
     - name: "Fix permissions for website"
-      file: path={{ site_prefix }}/{{ hostname }} state=directory owner=www-data group=www-data recurse=true
+      file: path={{ www_neuro }} state=directory owner=www-data group=www-data recurse=true
 
     - name: "Copy production settings.py file"
-      template: src=templates/settings.py.j2 dest={{ site_prefix }}/{{ hostname }}/main/settings.py owner=www-data group=www-data
+      template: src=templates/settings.py.j2 dest={{ www_neuro }}/main/settings.py owner=www-data group=www-data
 
     - name: "Install virtualenv"
       action: pip name={{ item }} state=present
@@ -36,10 +36,10 @@
           - virtualenv
 
     - name: "Install site dependencies on the virtualenv"
-      pip: requirements={{ site_prefix }}/{{ hostname }}/requirements.txt virtualenv={{ site_prefix }}/{{ hostname }}/.venv
+      pip: requirements={{ www_neuro }}/requirements.txt virtualenv={{ www_neuro }}/.venv
     
     - name: "Install postgresql support for python"
-      pip: name=psycopg2 virtualenv={{ site_prefix }}/{{ hostname }}/.venv
+      pip: name=psycopg2 virtualenv={{ www_neuro }}/.venv
 
     - name: "Copy Nginx neurostars.org template"
       template: src=templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf
@@ -53,15 +53,15 @@
     
     # XXX: Not sure if this practice is acceptable
     - name: "Symlink to static files"
-      file: state=link src=/mnt/static dest={{ site_prefix }}/{{ hostname }}/static
+      file: state=link src=/mnt/static dest={{ www_neuro }}/static
 
     - name: "Setup the django site, syncdb, collectstatic and migrate"
       action: django_manage command={{ item }} 
-                            app_path={{ site_prefix }}/{{ hostname }}
-                            settings={{ site_prefix }}/{{ hostname }}
-                            virtualenv={{ site_prefix }}/{{ hostname }}/.venv
+                            app_path={{ www_neuro }}
+                            settings={{ www_neuro }}
+                            virtualenv={{ www_neuro }}/.venv
                             settings=main.settings
-                            #pythonpath={{ site_prefix }}/{{ hostname }}
+                            #pythonpath={{ www_neuro }}
       with_items:
           - collectstatic
           # XXX: The next fail with "No module named server.const
