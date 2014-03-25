@@ -51,22 +51,14 @@
     - name: "External mountpoint for static files, ensure it is created and present"
       file: path=/mnt/static owner=www-data group=www-data state=directory
 
-    - name: "Create initial database for the site"
-    - django_manage: >
-          command=syncdb
-          app_path={{ site_prefix }}/{{ hostname }}
-          settings={{ site_prefix }}/{{ hostname }}
-          virtualenv={{ site_prefix }}/{{ hostname }}/.venv
-          settings=main.settings
-    
-    - name: "Collectstatic files into external mountpoint defined in settings.py"
-      django_manage: >
-          command=collectstatic
-          app_path={{ site_prefix }}/{{ hostname }}
-          settings={{ site_prefix }}/{{ hostname }}
-          virtualenv={{ site_prefix }}/{{ hostname }}/.venv
-          settings=main.settings
-          link=true
+    - name: "Setup the django site, syncdb and place static files so that nginx/uwsgi can serve them"
+      action: django_manage command={{ item }} app_path={{ site_prefix }}/{{ hostname }}
+                            settings={{ site_prefix }}/{{ hostname }}
+                            virtualenv={{ site_prefix }}/{{ hostname }}/.venv
+                            settings=main.settings
+      with_items:
+          - syncdb
+          - collectstatic
 
     # XXX: Not sure if this practice is acceptable
     - name: "Symlink to static files"
