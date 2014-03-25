@@ -1,0 +1,74 @@
+---
+- name: Deploy neurostars.org Django website, PostgreSQL, Nginx, uWSGI
+  hosts: all
+  user: root
+  gather_facts: no
+
+  roles:
+    - ../common
+    - ../nginx
+    - ../uwsgi
+    - ../postgresql
+
+  tasks:
+    - name: "Set the hostname"
+      shell: hostname {{ hostname }}
+
+    #- name: "Create a user for this Django webapp"
+    #  user: name={{ osuser }} password={{ ospassword }} groups=www-data
+    #  No need, it runs under www-data
+
+    - name: "Configure postgresql"
+      sudo: yes
+      sudo_user: postgres
+      include: tasks/postgresql.yml
+
+    - name: "Clone the website from GitHub"
+      git: repo=https://github.com/brainstorm/biostar-central 
+            dest={{ site_prefix }}/{{ hostname }}
+            version={{ hostname }}
+
+    - name: "Fix permissions for website"
+      file: path={{ site_prefix }}/{{ hostname }} state=directory owner=www-data group=www-data recurse=true
+
+    - name: "Copy production settings.py file"
+      copy: src=templates/settings.py.j2 dest={{ site_prefix }}/{{ hostname }}/main owner=www-data group=www-data
+
+    - name: "Install virtualenv and uwsgi"
+      action: pip name={{ item }} state=present
+      with_items:
+          - virtualenv
+            #      - uwsgi # superseeded by ansible-galaxy role
+
+    - name: "Install site dependencies on the virtualenv"
+      pip: requirements={{ site_prefix }}/{{ hostname }}/requirements.txt virtualenv={{ site_prefix }}/{{ hostname }}
+    
+    - name: "Install postgresql support for python"
+      pip: name=psycopg2 virtualenv={{ site_prefix }}/{{ hostname }}
+
+    - name: "Copy Nginx neurostars.org template"
+      template: src=templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf
+
+    - name: "Create app directories for uWSGI"
+      action: files path={{ item }} state=directory
+      with_items: 
+          - /etc/uwsgi/apps-enabled
+          - /etc/uwsgi/apps-available
+
+    - name: "Copy uWSGI template"
+      template: src=templates/uwsgi.ini.j2 dest=/etc/uwsgi/apps-available/neurostars.org.ini
+
+    - name: "Activate uWSGI app by symlinking"
+      file: src=/etc/uwsgi/apps-available/uwsgi.ini.j2 dest=/etc/uwsgi/apps-enabled/neurostars.ini state=link
+
+    - name: "External mountpoint for static files, ensure it is created and present"
+      file: path=/mnt/static owner=www-data group=www-data state=directory
+
+    - name: "Collectstatic files into external mountpoint defined in settings.py"
+      django_manage: >
+          command=collectstatic
+          app_path={{ site_prefix }}/{{ hostname }}
+          settings={{ site_prefix }}/{{ hostname }}
+          virtualenv={{ site_prefix }}/{{ hostname }}
+          settings=main.settings
+          link=true

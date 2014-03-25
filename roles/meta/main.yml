@@ -1,0 +1,13 @@
+---
+galaxy_info:
+  author: Roman Valls Guimera
+  description: a role that deploys NeuroStars.org django website
+  license: GPL
+  min_ansible_version: 1.5
+  platforms:
+    - name: Ubuntu
+      versions:
+      - saucy
+  categories:
+    - web
+dependencies: [ postgresql, uwsgi, nginx ]

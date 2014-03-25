@@ -1,0 +1,19 @@
+---
+- name: "Ensure basic system (and ansible deps) packages are installed"
+  apt: pkg={{ item }} state=present update_cache=yes
+  with_items:
+    - libpq-dev
+    - vim
+    - rsync
+    - git 
+    - curl
+    - sudo
+    - python-pip
+    - python-dev
+    - python-apt
+    - python-pycurl
+    - python-psycopg2
+    - unattended-upgrades
+
+- name: "Copy the unattended upgrades file"
+  copy: src=50unattended-upgrades dest=/etc/apt/apt.conf.d/50unattended-upgrades
