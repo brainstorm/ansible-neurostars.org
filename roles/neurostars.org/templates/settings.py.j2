@@ -59,10 +59,10 @@ __CURR_DIR = path(os.path.dirname(__file__))
 # set location relative to the current file directory
 HOME_DIR = path(__CURR_DIR)
 DATABASE_DIR = path(HOME_DIR, 'db')
-DATABASE_NAME = {{ dbname }}
+DATABASE_NAME = '{{ dbname }}'
 TEMPLATE_DIR = path(HOME_DIR, 'main', 'templates')
-STATIC_DIR = path('/mnt/static')
-EXPORT_DIR = path('/mnt/static')
+STATIC_DIR = path(HOME_DIR, 'static')
+EXPORT_DIR = path(os.sep, 'mnt', 'static' )
 WHOOSH_INDEX = path(HOME_DIR, 'db', 'index')
 PLANET_DIR = path(HOME_DIR, 'db', 'planet')
 

@@ -28,7 +28,7 @@
       file: path={{ site_prefix }}/{{ hostname }} state=directory owner=www-data group=www-data recurse=true
 
     - name: "Copy production settings.py file"
-      copy: src=templates/settings.py.j2 dest={{ site_prefix }}/{{ hostname }}/main owner=www-data group=www-data
+      template: src=templates/settings.py.j2 dest={{ site_prefix }}/{{ hostname }}/main/settings.py owner=www-data group=www-data
 
     - name: "Install virtualenv and uwsgi"
       action: pip name={{ item }} state=present
