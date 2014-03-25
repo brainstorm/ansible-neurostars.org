@@ -44,8 +44,9 @@
     - name: "Copy Nginx neurostars.org template"
       template: src=templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf
 
-    - name: "Copy uWSGI template"
-      template: src=templates/uwsgi.ini.j2 dest=/etc/uwsgi/neurostars.org.ini
+    - name: "Copy uWSGI template to emperor vassals"
+      template: src=templates/uwsgi.ini.j2 dest=/etc/uwsgi/vassals/neurostars.org.ini
+      notify: restart the uwsgi emperor
 
     - name: "External mountpoint for static files, ensure it is created and present"
       file: path=/mnt/static owner=www-data group=www-data state=directory
