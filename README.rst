@@ -1,5 +1,19 @@
-WARNING: Work in progress, still not fully deployable nor ansible-galaxy compatible!
+=============================
+Biostar-Central Ansible Roles
+=============================
 
-Initial deployment role for NeuroStars.org website. Should deploy a biostars1-based website when finished:
+Initial deployment role for NeuroStars.org website. Should deploy a biostars1-based website. There are two provisioning options:
 
-ansible-playbook roles/neurostars.org/site.yml -i 141.5.100.185,
+Install in a bare-metal machine or local VM in your datacenter
+==============================================================
+
+```
+ansible-playbook roles/neurostars.org/site.yml -i 10.0.100.50,
+```
+
+Or using a local Vagrant installation instead
+=============================================
+
+```
+git clone git@github.com:brainstorm/ansible-neurostars.org.git && cd ansible-neurostars.org && vagrant up
+```
