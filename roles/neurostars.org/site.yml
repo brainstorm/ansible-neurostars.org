@@ -43,6 +43,7 @@
 
     - name: "Copy Nginx neurostars.org template"
       template: src=templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf
+      notify: restart nginx
 
     - name: "Copy uWSGI template to emperor vassals"
       template: src=templates/uwsgi.ini.j2 dest=/etc/uwsgi/vassals/neurostars.org.ini
@@ -51,7 +52,7 @@
     - name: "External mountpoint for static files, ensure it is created and present"
       file: path=/mnt/static owner=www-data group=www-data state=directory
     
-    # XXX: Not sure if this practice is acceptable
+    # XXX: Not sure if this practice is acceptable (symlink to static in production)
     - name: "Symlink to static files"
       file: state=link src=/mnt/static dest={{ www_neuro }}/static
 
@@ -61,9 +62,8 @@
                             settings={{ www_neuro }}
                             virtualenv={{ www_neuro }}/.venv
                             settings=main.settings
-                            #pythonpath={{ www_neuro }}
+                            pythonpath={{ www_neuro }}/main
       with_items:
           - collectstatic
-          # XXX: The next fail with "No module named server.const
-          # - syncdb
-          # - migrate
+          - syncdb
+          - migrate

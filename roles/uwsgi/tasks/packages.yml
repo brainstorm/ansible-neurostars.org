@@ -12,7 +12,5 @@
     - libdb5.1-dev
     - python2.7
     - python2.7-dev
-    - ruby1.9.1-dev
-    - php5-dev
     - libcap-dev
     - liblua5.1-0-dev
