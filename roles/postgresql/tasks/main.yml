@@ -2,7 +2,7 @@
 - name: Install Postgresql
   apt: name={{ item }} state=present
   with_items:
-   - postgresql 
+   - postgresql
 
 - name: Start postgresql service
   service: name=postgresql state=started enabled=true
