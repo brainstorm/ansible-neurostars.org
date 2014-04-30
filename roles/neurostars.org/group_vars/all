@@ -1,4 +1,4 @@
-# Site configuration 
+# Site configuration
 site_prefix: /var/www
 hostname: neurostars.org
 www_neuro: "{{ site_prefix }}/{{ hostname }}"
@@ -13,6 +13,6 @@ dbuser: neurostar
 dbpassword: password
 
 # SMTP
-email_host: stmp.example.com
-email_host_user: stmpuser
+email_host: smtp.example.com
+email_host_user: smtpuser
 email_host_password: smtp_password

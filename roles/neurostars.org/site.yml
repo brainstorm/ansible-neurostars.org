@@ -20,7 +20,7 @@
       include: tasks/postgresql.yml
 
     - name: "Clone the website from GitHub"
-      git: repo=https://github.com/brainstorm/biostar-central 
+      git: repo=https://github.com/brainstorm/biostar-central
             dest={{ www_neuro }}
             version={{ hostname }}
 
@@ -31,13 +31,13 @@
       template: src=templates/settings.py.j2 dest={{ www_neuro }}/main/settings.py owner=www-data group=www-data
 
     - name: "Install virtualenv"
-      action: pip name={{ item }} state=present
+      pip: name={{ item }} state=present
       with_items:
           - virtualenv
 
     - name: "Install site dependencies on the virtualenv"
       pip: requirements={{ www_neuro }}/requirements.txt virtualenv={{ www_neuro }}/.venv
-    
+
     - name: "Install postgresql support for python"
       pip: name=psycopg2 virtualenv={{ www_neuro }}/.venv
 
@@ -51,13 +51,13 @@
 
     - name: "External mountpoint for static files, ensure it is created and present"
       file: path=/mnt/static owner=www-data group=www-data state=directory
-    
+
     # XXX: Not sure if this practice is acceptable (symlink to static in production)
     - name: "Symlink to static files"
       file: state=link src=/mnt/static dest={{ www_neuro }}/static
 
     - name: "Setup the django site, syncdb, collectstatic and migrate"
-      action: django_manage command={{ item }} 
+      action: django_manage command={{ item }}
                             app_path={{ www_neuro }}
                             settings={{ www_neuro }}
                             virtualenv={{ www_neuro }}/.venv
