@@ -39,7 +39,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.inline += "&& apt-get install -y python-pip python-dev"
     s.inline += "&& pip install ansible"
     s.inline += "&& ansible-galaxy install nicholsn.miniconda"
-	s.inline += "&& ansible-playbook /etc/ansible/roles/nicholsn.miniconda/local.yml -v"
+	s.inline += "&& ansible-playbook -i /etc/ansible/roles/nicholsn.miniconda/hosts /etc/ansible/roles/nicholsn.miniconda/local.yml -v"
   end
 
   # Checkout neurostars.org deployer 
