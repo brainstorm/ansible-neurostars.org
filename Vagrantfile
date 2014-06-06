@@ -28,23 +28,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       vb.customize ["modifyvm", :id, "--cpus", "1"]
   end
 
-  # Pull Docker Container
-  config.vm.provision :docker do |container|
-      container.pull_images "nicholsn/miniconda"
-  end
-
-  # Install ansible inside Vagrant and provision remote machine(s) from there
-  config.vm.provision "shell" do |s|
-    s.inline = "apt-get update"
-    s.inline += "&& apt-get install -y python-pip python-dev"
-    s.inline += "&& pip install ansible"
-    s.inline += "&& ansible-galaxy install nicholsn.miniconda"
-	s.inline += "&& ansible-playbook -i /etc/ansible/roles/nicholsn.miniconda/hosts /etc/ansible/roles/nicholsn.miniconda/local.yml -v"
-  end
-
   # Checkout neurostars.org deployer 
   config.vm.provision "shell" do |s|
-    s.inline = "apt-get install -y git"
+    s.inline = "apt-get update"
+    s.inline = "&& apt-get install -y git python-pip python-dev"
+    s.inline += "&& pip install ansible"
     s.inline += "&& ansible-galaxy install brainstorm.neurostars_org"
   end
 end
