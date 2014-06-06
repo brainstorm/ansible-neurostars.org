@@ -32,8 +32,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Checkout neurostars.org deployer 
   config.vm.provision "shell" do |s|
     s.inline = "apt-get update"
-    s.inline = "&& apt-get install -y git python-pip python-dev"
-    s.inline += "&& pip install ansible"
-    s.inline += "&& ansible-galaxy install brainstorm.neurostars_org"
+    s.inline = "&& apt-get install -y git python-pip python-dev\n"
+    s.inline += "&& pip install ansible\n"
+    s.inline += "&& ansible-galaxy install brainstorm.neurostars_org\n"
   end
 end
