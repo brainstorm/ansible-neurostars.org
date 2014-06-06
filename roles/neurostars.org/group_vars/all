@@ -16,3 +16,11 @@ dbpassword: password
 email_host: smtp.example.com
 email_host_user: smtpuser
 email_host_password: smtp_password
+
+# Amazon
+
+mykeypair: neurostars
+security_group: default
+instance_type: m1.small
+region: eu-west-1
+wait: true

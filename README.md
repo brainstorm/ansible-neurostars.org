@@ -1,4 +1,3 @@
-=============================
 Biostar-Central Ansible Roles
 =============================
 
@@ -15,3 +14,11 @@ Or using a local Vagrant installation instead
 =============================================
 
     git clone https://github.com/brainstorm/ansible-neurostars.org.git && cd ansible-neurostars.org && vagrant up
+
+Or, setting it up in any of the popular cloud providers
+=======================================================
+
+Tweak the settings in roles/neurostars.org/group_vars/all
+
+export AWS_ACCESS_KEY_ID=<aws key id>
+export AWS_ACCESS_KEY=<aws secret key id>
