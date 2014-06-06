@@ -1,64 +1,54 @@
+#ansible-playbook site.yml -i 192.168.0.10,
+#ansible-playbook site.yml -i 172.31.79.90,
 ---
-- name: Deploy neurostars.org Django website, PostgreSQL, Nginx, uWSGI
+- name: Deploy neurostars.org Django website, PostgreSQL
   hosts: all
   user: root
   gather_facts: no
 
   roles:
     - ../common
-    - ../nginx
-    - ../postgresql
 
   tasks:
     - name: "Set the hostname"
       shell: hostname {{ hostname }}
 
-    - name: "Configure postgresql"
+    - name: "Ensure basic system (and ansible deps) packages are installed"
+      apt: pkg={{ item }} state=present update_cache=yes
+      with_items:
+        - vim
+        - rsync
+        - git
+        - curl
+        - sudo
+        - docker.io
+        - unattended-upgrades
+
+    - name: "Complete docker installation"
+      shell: ln -sf /usr/bin/docker.io /usr/local/bin/dockers
       sudo: yes
-      sudo_user: postgres
-      include: tasks/postgresql.yml
 
-    - name: "Clone the website from GitHub"
-      git: repo=https://github.com/brainstorm/biostar-central
-            dest={{ www_neuro }}
-            version={{ hostname }}
+    - name: "Run a postgresql container"
+      docker:
+        image=orchardup/postgresql
+        name=postgresql
+        ports=5432:5432
+        env="POSTGRESQL_USER=docker,POSTGRESQL_PASS=docker,POSTGRESQL_DB=docker"
 
-    - name: "Fix permissions for website"
-      file: path={{ www_neuro }} state=directory owner=www-data group=www-data recurse=true
 
-    - name: "Copy production settings.py file"
-      template: src=templates/settings.py.j2 dest={{ www_neuro }}/main/settings.py owner=www-data group=www-data
+#    - name: "External mountpoint for static files, ensure it is created and present"
+#      file: path=/mnt/static owner=www-data group=www-data state=directory
 
-    - name: "Install virtualenv"
-      pip: name={{ item }} state=present
-      with_items:
-          - virtualenv
+#    - name: "Build Dockerfiles"
+#      ......
+#      docker build -t neurostars/postgresql - < Dockerfile-postgresql
+#      docker build -t neurostars/biostar - < Dockerfile-webapp
+#      sudo: yes
 
-    - name: "Install site dependencies on the virtualenv"
-      pip: requirements={{ www_neuro }}/requirements.txt virtualenv={{ www_neuro }}/.venv
+#    - name: "Ensure Postgresql container is running"
+#      docker: image=neurostars/postgresql name=postgresql publish_all_ports=True
+#      sudo: yes
 
-    - name: "Install postgresql support for python"
-      pip: name=psycopg2 virtualenv={{ www_neuro }}/.venv
-
-    - name: "Copy Nginx neurostars.org template"
-      template: src=templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf
-      notify: restart nginx
-
-    - name: "External mountpoint for static files, ensure it is created and present"
-      file: path=/mnt/static owner=www-data group=www-data state=directory
-
-    # XXX: Not sure if this practice is acceptable (symlink to static in production)
-    - name: "Symlink to static files"
-      file: state=link src=/mnt/static dest={{ www_neuro }}/static
-
-    - name: "Setup the django site, syncdb, collectstatic and migrate"
-      action: django_manage command={{ item }}
-                            app_path={{ www_neuro }}
-                            settings={{ www_neuro }}
-                            virtualenv={{ www_neuro }}/.venv
-                            settings=main.settings
-                            pythonpath={{ www_neuro }}/main
-      with_items:
-          - collectstatic
-          - syncdb
-          - migrate
+#    - name: "Ensure web app container is running"
+#      docker: image=neurostars/biostar name=biostar ports=8000:8000 links=postgresql:pg
+#      sudo: yes
