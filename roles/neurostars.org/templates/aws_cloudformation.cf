@@ -1,0 +1,102 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+
+    "Description" : "This template creates an instance of biostar-central.",
+
+    "Parameters" : {
+        "KeyName" : {
+            "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+            "Type" : "String"
+        },
+    },
+
+    "Mappings" : {
+        "RegionMap" : {
+            "us-west-1"      : { "AMI" : "ami-be5054fb", "PrefAz" : "us-west-1a" },
+            "eu-west-1"      : { "AMI" : "ami-993ff2ee", "PrefAz" : "eu-west-1a" },
+            "sa-east-1"      : { "AMI" : "ami-d361cdce", "PrefAz" : "sa-east-1a" },
+            "ap-northeast-1" : { "AMI" : "ami-ab571aaa", "PrefAz" : "ap-northeast-1a" }
+        }
+    },
+
+    "Resources" : {
+        "biostar-central-instance" : {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "AvailabilityZone" : { 
+                    "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "PrefAz" ]
+                },
+                "SecurityGroups" : [ { "Ref" : "biostar-central-secgroup" } ],
+                "KeyName" : { "Ref" : "KeyName" },
+                "InstanceType": "t1.micro",
+                "ImageId" : { 
+                    "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]
+                },
+            }
+        },
+
+        "IPAddress" : { 
+            "Type" : "AWS::EC2::EIP"
+        },
+
+        "IPAssoc" : {
+            "Type" : "AWS::EC2::EIPAssociation",
+            "Properties" : {
+                "InstanceId" : { "Ref" : "biostar-central-instance" },
+                "EIP" : { "Ref" : "IPAddress" }
+            }
+        },
+
+        "biostar-central-secgroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "Enable ports for web and SSH",
+                "SecurityGroupIngress" : [ 
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : "22",
+                        "ToPort" : "22",
+                        "CidrIp" : "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : "25",
+                        "ToPort" : "25",
+                        "CidrIp" : "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : "80",
+                        "ToPort" : "80",
+                        "CidrIp" : "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : "443",
+                        "ToPort" : "443",
+                        "CidrIp" : "0.0.0.0/0"
+                    },
+                ]
+            }
+        }
+    },
+
+    "Outputs" : {
+        "InstanceId" : {
+            "Description" : "InstanceId of the newly created data server instance",
+            "Value" : { "Ref" : "biostar-central-instance" }
+        },
+        "AZ" : {
+            "Description" : "Availability Zone of the newly created data server instance",
+            "Value" : { "Fn::GetAtt" : [ "biostar-central-instance", "AvailabilityZone" ] }
+        },
+        "PublicDNS" : {
+            "Description" : "Public DNSName of the newly created data server instance",
+            "Value" : { "Fn::GetAtt" : [ "biostar-central-instance", "PublicDnsName" ] }
+        },
+        "PublicIP" : {
+            "Description" : "Public IP address of the newly created data server instance",
+            "Value" : { "Fn::GetAtt" : [ "biostar-central-instance", "PublicIp" ] }
+        }
+    }
+}
