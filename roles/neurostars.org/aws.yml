@@ -28,4 +28,5 @@
   sudo: True
   gather_facts: True
   roles:
+    - ../common
     - ../nginx
