@@ -7,7 +7,7 @@
 
   tasks:
   - name: "Launch basic cloudformation"
-    action: cloudformation stack_name="biostar-central" state=present region=eu-west-1 disable_rollback=yes template=templates/aws_cloudformation.cf
+    action: cloudformation stack_name="biostar-central" state=present region=eu-west-1 disable_rollback=no template=templates/aws_cloudformation.cf
     args:
       template_parameters:
         KeyName: "{{ mykeypair }}"
@@ -20,7 +20,7 @@
     debug: msg="The instance attributes are {{stack.stack_outputs}}"
 
   - name: "Add new instance to host group"
-    local_action: add_host hostname={{ stack.stack_outputs.PublicIP }} groupname=launched
+    local_action: add_host hostname={{ stack.stack_outputs.PublicDNS }} groupname=launched
 
 - name: "Deploy the whole site inside instance"
   hosts: launched

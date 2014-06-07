@@ -40,7 +40,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.inline = "apt-get update"
     s.inline += "&& export AWS_ACCESS_KEY_ID=" + ENV['AWS_ACCESS_KEY_ID']
     s.inline += "&& export AWS_SECRET_KEY=" + ENV['AWS_SECRET_KEY']
-    s.inline += "&& echo " + ENV['AWS_ACCESS_KEY_ID']
     s.inline += "&& apt-get install -y git python-pip python-dev"
     s.inline += "&& pip install ansible"
     s.inline += "&& ansible-galaxy install brainstorm.neurostars_org"

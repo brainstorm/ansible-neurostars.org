@@ -35,7 +35,7 @@
                 },
                 "SecurityGroups" : [ { "Ref" : "BiostarCentralSecgroup" } ],
                 "InstanceType" : { "Ref" : "InstanceType" },
-		"KeyName" : { "Ref" : "KeyName" },
+                "KeyName" : { "Ref" : "KeyName" },
                 "ImageId" : {
                     "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]
                 }
