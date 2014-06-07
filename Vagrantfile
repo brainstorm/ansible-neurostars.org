@@ -23,6 +23,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 80, host: 8080
   config.ssh.forward_agent = true
   
+  # Make sure AWS keys are defined beforehand
+  if ENV['AWS_ACCESS_KEY_ID'].nil? or ENV['AWS_SECRET_KEY'].nil?
+    puts "You must setup the Amazon AWS environment variables in your host system: AWS_ACCESS_KEY_ID and AWS_SECRET_KEY"
+    exit 1
+  end
+
   config.vm.provider "virtualbox" do |vb|
       vb.customize ["modifyvm", :id, "--ioapic", "on"]
       vb.customize ["modifyvm", :id, "--memory", "1024"]
@@ -32,8 +38,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Checkout neurostars.org deployer 
   config.vm.provision "shell" do |s|
     s.inline = "apt-get update"
-    s.inline = "&& apt-get install -y git python-pip python-dev\n"
-    s.inline += "&& pip install ansible\n"
-    s.inline += "&& ansible-galaxy install brainstorm.neurostars_org\n"
+    s.inline += "&& export " + ENV['AWS_ACCESS_KEY_ID']
+    s.inline += "&& export " + ENV['AWS_SECRET_KEY']
+    s.inline += "&& apt-get install -y git python-pip python-dev"
+    s.inline += "&& pip install ansible"
+    s.inline += "&& ansible-galaxy install brainstorm.neurostars_org"
+    s.inline += "&& ansible-playbook -i /etc/ansible/roles/ansible-neurostars_org/hosts /etc/ansible/ansible-neurostars_org/neurostars_org.yml -v"
   end
 end
