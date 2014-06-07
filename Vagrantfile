@@ -43,6 +43,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.inline += "&& apt-get install -y git python-pip python-dev"
     s.inline += "&& pip install ansible"
     s.inline += "&& ansible-galaxy install brainstorm.neurostars_org"
-    s.inline += "&& ansible-playbook -i /etc/ansible/roles/ansible-neurostars_org/hosts /etc/ansible/ansible-neurostars_org/neurostars_org.yml -v"
+    s.inline += "&& ansible-playbook -i /etc/ansible/roles/brainstorm.ansible-neurostars_org/hosts /etc/ansible/roles/brainstorm.ansible-neurostars_org/roles/neurostars.org/aws.yml -v"
   end
 end
