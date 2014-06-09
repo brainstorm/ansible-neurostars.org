@@ -32,4 +32,4 @@ Then, just running `vagrant up` should suffice! :)
 Google compute Engine
 =====================
 
-TBD
+[Google compute client ID](https://console.developers.google.com/project)
