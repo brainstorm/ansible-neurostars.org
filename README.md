@@ -1,25 +1,24 @@
-Biostar-Central Ansible Roles
-=============================
+= Biostar-Central Ansible Roles =
 
 Initial deployment role for NeuroStars.org website. Should deploy a biostars1-based website. There are two provisioning options:
 
-Install in a bare-metal machine or local VM in your datacenter
-==============================================================
+== Install in a bare-metal machine or local VM in your datacenter ==
 
+Mind the final comma!
 
-    ansible-playbook roles/neurostars.org/site.yml -i 10.0.100.50,
+```
+ansible-playbook roles/neurostars.org/site.yml -i 10.0.100.50,
+```
 
+== Or using a local Vagrant installation instead ==
 
-Or using a local Vagrant installation instead
-=============================================
+```
+git clone https://github.com/brainstorm/ansible-neurostars.org.git && cd ansible-neurostars.org && vagrant up
+```
 
-    git clone https://github.com/brainstorm/ansible-neurostars.org.git && cd ansible-neurostars.org && vagrant up
+== Or setting it up in any of the popular cloud providers ==
 
-Or, setting it up in any of the popular cloud providers
-=======================================================
-
-AWS
-===
+=== AWS ===
 
 This automated deployment script assumes that you have the following in your AWS console:
 
@@ -29,8 +28,7 @@ This automated deployment script assumes that you have the following in your AWS
 
 Then, just running `vagrant up` should suffice! :)
 
-Google compute Engine
-=====================
+=== Google compute Engine ===
 
 Some information must be fetched from [Google Compute Engine](https://console.developers.google.com/project)
 
