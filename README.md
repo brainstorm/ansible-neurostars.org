@@ -36,7 +36,6 @@ Some information must be fetched from [Google Compute Engine](https://console.de
 ```
 export GCE_PRJ_ID="your_sample_project"
 export GCE_DEV_ID="666666-[hash]@developer.gserviceaccount.com"
-export GCE_PEM_PATH="converted .pem file from .p12"
 ```
 
 Then, running:

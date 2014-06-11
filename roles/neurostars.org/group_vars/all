@@ -26,5 +26,4 @@ wait: true
 
 #GCE
 gce_dev_id: "{{ lookup('env','GCE_DEV_ID') }}"
-gce_pem_path: "{{ lookup('env','GCE_PEM_PATH') }}"
 gce_prj_id: "{{ lookup('env','GCE_PRJ_ID') }}"
