@@ -30,6 +30,9 @@
      add_host: hostname={{ item.public_ip }} groupname=new_instances
      with_items: gce.instance_data
 
+   - name: "Add host public key to GCE instance"
+     local_action: shell gcutil --service_version="v1" --project={{ gce_prj_id }} ssh --zone="us-central1-a" "biostar"
+
 - name: "Manage new instances"
   hosts: new_instances
   connection: ssh

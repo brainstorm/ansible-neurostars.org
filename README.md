@@ -38,6 +38,12 @@ export GCE_PRJ_ID="your_sample_project"
 export GCE_DEV_ID="666666-[hash]@developer.gserviceaccount.com"
 ```
 
+Also, installing the "gcutils" commandline and running:
+
+```
+gcutil --service_version="v1" --project=$GCE_PRJ_ID ssh --zone="us-central1-a" "instance_name"
+```
+
 Then, running:
 
 ```
